@@ -101,9 +101,28 @@ class Mtce extends Application {
             {
                 $priparms[$record->id] = $record->name;
             }
+            
+            foreach ($this->sizes->all() as $record)
+            {
+                $priparmSize[$record->id] = $record->name;
+            }
+
+            foreach ($this->groups->all() as $record)
+            {
+                $priparmGroup[$record->id] = $record->name;
+            }
+
+            foreach ($this->statuses->all() as $record)
+            {
+                $priparmStatus[$record->id] = $record->name;
+            }
+            
             $fields = array(
                 'ftask' => makeTextField('Task description', 'task', $task->task, 'Work', "What needs to be done?"),
                 'fpriority' => makeComboBox('Priority', 'priority', $task->priority, $priparms, "How important is this task?"),
+                'fsize' => makeComboBox('Size','size',$task->size,$priparmSize,"What is the size of the task?"),
+                'fgroup' => makeComboBox('Group','group',$task->group,$priparmGroup,"Who is in the group?"),
+                'fstatus' => makeComboBox('Status','status',$task->status,$priparmStatus,"What is the status of the task?"),
                 'zsubmit' => makeSubmitButton('Update the TODO task', "Click on home or <back> if you don't want to change anything!", 'btn-success'),
             );
             $this->data = array_merge($this->data, $fields);
@@ -159,6 +178,4 @@ class Mtce extends Application {
             $this->session->unset_userdata('task');
             redirect('/mtce');
         }
-        
-        
 }
