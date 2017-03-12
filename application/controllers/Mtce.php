@@ -19,15 +19,20 @@ class Mtce extends Application {
 			foreach ($tasks as $task)
 			{
 				if (!empty($task->status))
-					$task->status = $this->statuses->get($task->status)->name;
-				$result .= $this->parser->parse('oneitem', (array) $task, true);
-			}
-			$this->data['display_tasks'] = $result;
+                                    $task->status = $this->statuses->get($task->status)->name;
+				//$result .= $this->parser->parse('oneitem', (array) $task, true);
 
-			// and then pass them on
-			$this->data['pagebody'] = 'itemlist';
-			$this->render();
-		}
+                                if($role == ROLE_OWNER)
+                                    $result .= $this->parser->parse('oneitemx', (array) $task, true);
+                                else
+                                    $result .= $this->parser->parse('oneitem', (array) $task, true);
+                                }
+                                $this->data['display_tasks'] = $result;
+
+                                // and then pass them on
+                                $this->data['pagebody'] = 'itemlist';
+                                $this->render();
+                        }
 		
 		// Extract & handle a page of items, defaulting to the beginning
 	function page($num = 1)
@@ -47,7 +52,14 @@ class Mtce extends Application {
 			if ($count >= $this->items_per_page) break;
 		}
 		$this->data['pagination'] = $this->pagenav($num);
-		$this->show_page($tasks);
+		
+                
+                $role = $this->session->userdata('userrole');
+                if($role == ROLE_OWNER)
+                $this->data['pagination'] .= $this->parser->parse('itemadd',[],true);
+                
+                
+                $this->show_page($tasks);
 	}
 	
 	// Build the pagination navbar
